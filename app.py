@@ -5,15 +5,17 @@ from flask import flash
 from datetime import datetime
 import cv2
 import numpy as np
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response, send_file
 from flask_pymongo import PyMongo
 import gridfs
+import csv
 
 app = Flask(__name__)
 app.secret_key = "secret_key"
 app.config["MONGO_URI"] = "mongodb+srv://chinmaytullu10:cmt175@cluster0.v20rn6t.mongodb.net/students"
 db = PyMongo(app).db
 fs = gridfs.GridFS(db)
+students=[]
 
 @app.route("/")
 def home():
@@ -191,7 +193,7 @@ def recognize():
                 #Region Of Interest - height, width
                 id, confidence=recognizer.predict(gray[y:y+h,x:x+w]) 
 
-                #check if confidence is less them 100 ==> "0" is perfect match 
+                #check if confidence is less than 100 ==> "0" is perfect match 
                 if (confidence < 70): #if the picture is recognised             
                     id = names[id]
                     confidence = "  {0}%".format(round(100 - confidence))
@@ -220,6 +222,9 @@ def recognize():
                         
                     db.attendance.update_one({"face_id": id}, {"$set": {"attend.dbms": dbms, "attend.aoa": aoa, "attend.math": math, "attend.os": os, "attend.mp": mp}})
                     flash("Attendance marked successfully!", "success")
+                    
+                    students.append({"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp})
+                    
                     marked=True
                     break
                     
@@ -253,4 +258,34 @@ def recognize():
     
     return render_template("./recognize.html")
 
-app.run(debug=True)
+@app.route("/csv_main", methods=["GET", "POST"])
+def csv_main():
+    if(request.method=="POST"):
+        return render_template("./downloadCSV.html")
+
+@app.route("/csv_download", methods=["GET", "POST"])
+def download_csv():
+    if(request.method=="POST"):
+
+        documents=db.attendance.find({})
+        for document in documents:
+            id=document.get("face_id")
+            dbms=document.get("attend").get("dbms")
+            aoa=document.get("attend").get("aoa")
+            math=document.get("attend").get("math")
+            os=document.get("attend").get("os")
+            mp=document.get("attend").get("mp")
+            # print(id, dbms, aoa, math, os, mp)
+            students.append({"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp})
+        
+        csv_data="Roll Number, DBMS, AOA, MATHS, OS, MP\n"
+        for student in students:
+            csv_data += f"{student['roll_number']}, {student['dbms']}, {student['aoa']}, {student['math']}, {student['os']}, {student['mp']}\n"
+        
+        with open("AttendaceList.csv", "w") as csv_file:
+            csv_file.write(csv_data)
+            
+        return send_file("AttendaceList.csv", as_attachment=True, download_name="AttendaceList.csv")    
+    # return render_template("./downloadCSV.html")
+
+app.run(debug=True, port=5005)

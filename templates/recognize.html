@@ -11,8 +11,10 @@
             crossorigin="anonymous"
         />
     </head>
-    <body class="mt-0 mb-5" style="font-family: 'Montserrat', sans-serif; background-color: #1f2641">
-
+    <body
+        class="mt-0 mb-5"
+        style="font-family: 'Montserrat', sans-serif; background-color: #1f2641"
+    >
         <div>
             <nav
                 class="navbar navbar-expand-lg mb-2"
@@ -41,70 +43,93 @@
                                 <a class="nav-link active" aria-current="page" href="#">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
+                                <a class="nav-link active" aria-current="page" href="#"
+                                    >Dashboard</a
+                                >
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="#">Contact</a>
                             </li>
                         </ul>
-                        <button onclick="redirectToPort();" class="btn btn-outline-success" type="submit"><a target="_blank" style="text-decoration: none;">Proceed to meeting</a></button>
-                    </div>    
-                </div>    
-            </div>
+
+                        <form action="/csv_main" method="post" enctype="multipart/form-data">
+                            <button class="btn btn-outline-success" type="submit">
+                                Attendance List
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </nav>
         </div>
-    </nav>
 
-    <br><br>
+        <br /><br />
 
-    <form action="/recognize" method="post" enctype="multipart/form-data">
-        <div class="container mt-5 mx-auto" style="width: max-content">
-            <label for="subject" class="text-white">Select subject:</label>
-            <select id="subject" name="subject" class="">
-                <option value="Dbms" selected>Database Management Systems</option>
-                <option value="Aoa">Analysis of Algorithm</option>
-                <option value="Math">Mathematics IV</option>
-                <option value="Os">Operating Systems</option>
-                <option value="Mp">Microprocessor</option>
-            </select> &emsp;&emsp;&emsp;&emsp;
-            <button style="font-weight:450" type="submit" class="btn btn-outline-info btn-lg">Verify Face</button>          
-        </div>
-    </form>
-
-    {% with messages = get_flashed_messages() %} 
-        {% if messages %} 
-            {% for message in messages %}
-            <br><br>
-            <div class="container" style="width: 40%; margin: 50px auto; background-color: #1d1879; padding: 13px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); text-align: center; align-items: center; justify-content: center">
-                <p class="text-white" style="font-size: 1.15rem;">{{ message }}</p>
+        <form action="/recognize" method="post" enctype="multipart/form-data">
+            <div class="container mt-5 mx-auto" style="width: max-content">
+                <label for="subject" class="text-white">Select subject:</label>
+                <select id="subject" name="subject" class="">
+                    <option value="Dbms" selected>Database Management Systems</option>
+                    <option value="Aoa">Analysis of Algorithm</option>
+                    <option value="Math">Mathematics IV</option>
+                    <option value="Os">Operating Systems</option>
+                    <option value="Mp">Microprocessor</option>
+                </select>
+                &emsp;&emsp;&emsp;&emsp;
+                <button style="font-weight: 450" type="submit" class="btn btn-outline-info btn-lg">
+                    Verify Face
+                </button>
             </div>
-            {% endfor %} 
-        {% endif %} 
-    {% endwith %}
+        </form>
 
-    <style>
-        /* Style the label */
-        label {
-            color: white;
-            margin-right: 20px;
-        }
+        {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
+        <br /><br />
+        <div
+            class="container"
+            style="
+                width: 40%;
+                margin: 50px auto;
+                background-color: #1d1879;
+                padding: 13px;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+            "
+        >
+            <p class="text-white" style="font-size: 1.15rem">{{ message }}</p>
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
 
-        /* Style the select dropdown */
-        select {
-            padding: 5px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: white;
-            color: #333;
-        }
-    </style>
+        <style>
+            /* Style the label */
+            label {
+                color: white;
+                margin-right: 20px;
+            }
 
-    <!-- <script>
+            /* Style the select dropdown */
+            select {
+                padding: 5px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                background-color: white;
+                color: #333;
+            }
+        </style>
+
+        <!-- <script>
         function redirectToPort() {
             window.location.href = "http://127.0.0.1:9999"; // Change the port number as needed
         }
     </script> -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-  </body>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+    </body>
 </html>
