@@ -1,6 +1,7 @@
+import tempfile
 from flask import flash
+import os as osm
 # import io
-# import os
 # from PIL import Image
 from datetime import datetime
 import cv2
@@ -282,10 +283,13 @@ def download_csv():
         for student in students:
             csv_data += f"{student['roll_number']}, {student['dbms']}, {student['aoa']}, {student['math']}, {student['os']}, {student['mp']}\n"
         
-        with open("AttendaceList.csv", "w") as csv_file:
+        # to download the file only in downloads folder and not the project folder as well 
+        temp_dir = tempfile.mkdtemp() #returns the path as string, creating a temporary directory to store the file in, which will be deleted later
+        file_path = osm.path.join(temp_dir, "AttendanceList.csv") #joins the complete path and ensures that the file is saved in this temporary directory
+        
+        with open(file_path, "w") as csv_file:
             csv_file.write(csv_data)
             
-        return send_file("AttendaceList.csv", as_attachment=True, download_name="AttendaceList.csv")    
-    # return render_template("./downloadCSV.html")
+        return send_file(file_path, as_attachment=True, download_name="AttendanceList.csv")    
 
 app.run(debug=True, port=5005)
