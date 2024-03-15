@@ -195,7 +195,7 @@ def recognize():
                 id, confidence=recognizer.predict(gray[y:y+h,x:x+w]) 
 
                 #check if confidence is less than 100 ==> "0" is perfect match 
-                if (confidence < 60): #if the picture is recognised             
+                if (confidence < 65): #if the picture is recognised             
                     id = names[id]
                     confidence = "  {0}%".format(round(100 - confidence))
                     
