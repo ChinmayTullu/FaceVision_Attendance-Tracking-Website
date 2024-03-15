@@ -16,7 +16,6 @@ app.secret_key = "secret_key"
 app.config["MONGO_URI"] = "mongodb+srv://chinmaytullu10:cmt175@cluster0.v20rn6t.mongodb.net/students"
 db = PyMongo(app).db
 fs = gridfs.GridFS(db)
-students=[]
 
 @app.route("/")
 def home():
@@ -135,7 +134,7 @@ def collect():
         print("\n\t{0} faces trained.".format(len(np.unique(ids))))
         
         attendance_data = {
-            "date": datetime.now().strftime("%Y-%m-%d"),
+            "date": datetime.now().strftime("%d-%m-%Y"),
             "time": datetime.now().strftime("%H:%M:%S"),
             "face_id": int(face_id),
             "attend": {"dbms": 0, "aoa": 0, "math": 0, "os": 0, "mp":0} 
@@ -145,6 +144,7 @@ def collect():
         
     return render_template("./recognize.html") #return "SUCCESS"
 
+selected_subject=""
 @app.route("/recognize", methods=["GET", "POST"])
 def recognize():
     if request.method=="POST":
@@ -205,26 +205,27 @@ def recognize():
                     math=document.get("attend").get("math")
                     os=document.get("attend").get("os")
                     mp=document.get("attend").get("mp")
+                    selected_subject=request.form['subject']
                     
-                    if request.form['subject']=="Dbms":
+                    if selected_subject=="Dbms":
                         dbms=dbms+1
                         
-                    elif request.form['subject']=="Aoa":
+                    elif selected_subject=="Aoa":
                         aoa=aoa+1
                         
-                    elif request.form['subject']=="Math":
+                    elif selected_subject=="Math":
                         math=math+1
                         
-                    elif request.form['subject']=="Os":
+                    elif selected_subject=="Os":
                         os=os+1
                     
-                    elif request.form['subject']=="Mp":
+                    elif selected_subject=="Mp":
                         mp=mp+1
                         
                     db.attendance.update_one({"face_id": id}, {"$set": {"attend.dbms": dbms, "attend.aoa": aoa, "attend.math": math, "attend.os": os, "attend.mp": mp}})
                     flash("Attendance marked successfully!", "success")
                     
-                    students.append({"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp})
+                    # students.append({"roll_number": id, "currently_attended": selected_subject, "date": datetime.now().strftime("%d:%m:%Y"), "time": datetime.now().strftime("%H:%M:%S"), "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp})
                     
                     marked=True
                     break
@@ -248,8 +249,8 @@ def recognize():
             k=cv2.waitKey(16) & 0xff #To extract the ASCII value of the pressed key
             if k==97: #ASCII value of 'a' from the keyboard
                 break 
-            elif i>=150:
-                break 
+            # elif i>=250:
+            #     break 
             
         #do a bit of cleanup
         print("\n\tExiting Program")
@@ -264,6 +265,7 @@ def csv_main():
     if(request.method=="POST"):
         return render_template("./downloadCSV.html")
 
+students=[]
 @app.route("/csv_download", methods=["GET", "POST"])
 def download_csv():
     if(request.method=="POST"):
@@ -276,18 +278,18 @@ def download_csv():
             math=document.get("attend").get("math")
             os=document.get("attend").get("os")
             mp=document.get("attend").get("mp")
-            # print(id, dbms, aoa, math, os, mp)
-            students.append({"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp})
+            print(id, dbms, aoa, math, os, mp)
+            students.append({"roll_number": id, "current_attended": selected_subject, "date": datetime.now().strftime("%d:%m:%Y"), "time": datetime.now().strftime("%H:%M:%S"), "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp})
         
-        csv_data="Roll Number, DBMS, AOA, MATHS, OS, MP\n"
+        csv_data="Roll Number, Current Attended, Date, Time, DBMS, AOA, MATHS, OS, MP\n"
         for student in students:
-            csv_data += f"{student['roll_number']}, {student['dbms']}, {student['aoa']}, {student['math']}, {student['os']}, {student['mp']}\n"
+            csv_data += f"{student['roll_number']}, {student['current_attended']}, {student['date']}, {student['time']}, {student['dbms']}, {student['aoa']}, {student['math']}, {student['os']}, {student['mp']}\n"
         
         # to download the file only in downloads folder and not the project folder as well 
         temp_dir = tempfile.mkdtemp() #returns the path as string, creating a temporary directory to store the file in, which will be deleted later
         file_path = osm.path.join(temp_dir, "AttendanceList.csv") #joins the complete path and ensures that the file is saved in this temporary directory
         
-        with open(file_path, "w") as csv_file:
+        with open(file_path, "w+") as csv_file:
             csv_file.write(csv_data)
             
         return send_file(file_path, as_attachment=True, download_name="AttendanceList.csv")    
