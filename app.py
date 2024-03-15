@@ -6,7 +6,7 @@ import os as osm
 from datetime import datetime
 import cv2
 import numpy as np
-from flask import Flask, render_template, request, Response, send_file
+from flask import Flask, render_template, request, send_file
 from flask_pymongo import PyMongo
 import gridfs
 import csv
