@@ -142,7 +142,6 @@ def collect():
         }
         db.attendance.insert_one(attendance_data)
 
-        
     return render_template("./recognize.html") #return "SUCCESS"
 
 selected_subject=""
