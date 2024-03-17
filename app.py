@@ -1,3 +1,4 @@
+import json
 import tempfile
 from flask import flash
 import os as osm
@@ -292,6 +293,24 @@ def download_csv():
         with open(file_path, "w+") as csv_file:
             csv_file.write(csv_data)
             
-        return send_file(file_path, as_attachment=True, download_name="AttendanceList.csv")    
+        return send_file(file_path, as_attachment=True, download_name="AttendanceList.csv") 
+    
+@app.route("/student_dashboard", methods=["GET", "POST"])
+def dashboard():
+    if request.method=="POST":
+        roll_no=int(request.form.get("face_id"))
+        document=db.attendance.find_one({"face_id": roll_no})
+        if document:
+            id=document.get("face_id")
+            dbms=document.get("attend").get("dbms")
+            aoa=document.get("attend").get("aoa")
+            math=document.get("attend").get("math")
+            os=document.get("attend").get("os")
+            mp=document.get("attend").get("mp")
+            student={"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp}
+            print(json.dumps(student))
+            return render_template("./chart.html", student=json.dumps(student)) 
+    
+    return render_template("./chart.html")      
 
 app.run(debug=True, port=5005)

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chart</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+        <link rel="stylesheet" href="..//static/styles/chart.css" />
+
+        <style>
+            .product-stats {
+                justify-content: center;
+                background-color: #d4bdde;
+            }
+
+            .top-selling-products {
+                width: 80%; /* Adjust the width as per your preference */
+                margin: 0 auto; /* Center the table within its container */
+                border-collapse: collapse;
+            }
+
+            .top-selling-products th,
+            .top-selling-products td {
+                border: 1px solid BLACK;
+                padding: 8px;
+                text-align: left;
+            }
+
+            .product-name {
+                align-items: center;
+            }
+
+            .product-name .icon {
+                margin-right: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="my-4" style="padding: 0;">
+            <form action="/student_dashboard" method="post" enctype="multipart/form-data">
+                <div class="my-0" style="padding-left: 1rem; justify-content: left; text-align: start; align-items: start;">
+                    <div class="mb-0">
+                        <label for="basic-url" class="form-label text-dark" style="padding-left: 1rem; justify-content: left; text-align: start; align-items: start;">
+                            Enter roll number
+                        </label>
+                        <div class="input-group w-25" style="padding-left: 1rem">
+                            <span class="input-group-text text-dark" id="basic-addon3">1-180</span>
+                            <input
+                                name="face_id"
+                                type="text"
+                                class="form-control"
+                                id="basic-url"
+                                aria-describedby="basic-addon3 basic-addon4"
+                            />
+                        </div>
+                    </div>
+                    <br>
+                    <div style="padding-left: 1rem">
+                        <button
+                            style="font-weight: 450"
+                            type="submit"
+                            class="btn btn-outline-danger"
+                            action=""
+                        >
+                            Generate Graphs
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div>
+            <label for="chartType">Select Chart Type:</label>
+            <select id="chartType" onchange="toggleChart()">
+                <option value="all" selected>All</option>
+                <option value="barchart">Bar Chart</option>
+                <option value="doughnut">Doughnut Chart</option>
+                <option value="line">Line Chart</option>
+                <option value="polar">Polar Chart</option>
+            </select>
+        </div>
+        <br /><br />
+        <div class="container">
+            <div class="chart" id="barchartContainer">
+                <canvas id="barchart" width="600" height="300"></canvas>
+            </div>
+            <div class="chart" id="doughnutContainer">
+                <canvas id="doughnut" width="300" height="300"></canvas>
+            </div>
+        </div>
+        <div class="container">
+            <div class="chart" id="lineContainer">
+                <canvas id="line" width="600" height="300"></canvas>
+            </div>
+            <div class="chart" id="polarContainer">
+                <canvas id="polar" width="300" height="300"></canvas>
+            </div>
+        </div>
+        
+        <div id="student-data" data-student="{{ student }}"></div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        
+        <script src="..//static/scripts/chart.js"></script>
+
+        <script>
+            function toggleChart() {
+                var selectedChart = document.getElementById("chartType").value;
+
+                // Hide all charts
+
+                document.getElementById("barchartContainer").style.display = "none";
+                document.getElementById("doughnutContainer").style.display = "none";
+                document.getElementById("lineContainer").style.display = "none";
+                document.getElementById("polarContainer").style.display = "none";
+
+                if (selectedChart == "all") {
+                    document.getElementById("barchartContainer").style.display = "block";
+                    document.getElementById("doughnutContainer").style.display = "block";
+                    document.getElementById("lineContainer").style.display = "block";
+                    document.getElementById("polarContainer").style.display = "block";
+                }
+
+                // Show the selected chart
+                document.getElementById(selectedChart + "Container").style.display = "block";
+            }
+        </script>
+
+    </body>
+</html>
