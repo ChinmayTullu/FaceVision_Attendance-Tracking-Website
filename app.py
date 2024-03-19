@@ -10,20 +10,64 @@ import numpy as np
 from flask import Flask, render_template, request, send_file
 from flask_pymongo import PyMongo
 import gridfs
+import bcrypt
 import csv
 
 app = Flask(__name__)
 app.secret_key = "secret_key"
-app.config["MONGO_URI"] = "mongodb+srv://chinmaytullu10:cmt175@cluster0.v20rn6t.mongodb.net/students"
+app.config["MONGO_URI"] = "mongodb+srv://chinmaytullu10:cmt175@cluster0.v20rn6t.mongodb.net/college"
 db = PyMongo(app).db
 fs = gridfs.GridFS(db)
 
 @app.route("/")
 def home():
-    return render_template("./collect.html")
+    return render_template("./index.html")
+
+@app.route("/login_page", methods=["GET", "POST"])
+def login_page():
+    return render_template("./login.html")
+    
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if(request.method=="POST"):
+        # getting all the details filled by the user
+        role=request.form.get("role")
+        email=request.form.get("email-address")
+        password=request.form.get("password")
+        
+        isEmpty=True #to check if DB is empty
+        isValidEmail=False #to check if email is valid and the user exists in the DB
+        documents=db.students_information.find({}) #gets all the documents from the collection
+        
+        for document in documents:
+            isEmpty=False
+            email1=document.get("email")
+            
+            # if user with provided credentials is present, display success message and return the same page
+            if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                flash("Successfully Signed In!", "success")
+                flash(document.get("name"), "username")
+                return render_template("./login.html")
+            
+            # to check if at least the email exists in the DB
+            if isValidEmail==False:
+                if email==email1:
+                    isValidEmail=True
+        
+        if isEmpty==True: #if the DB is empty
+            flash("No Users Present, Kindly Register Before Logging In!", "fail")
+        
+        elif isValidEmail==False: #if there is no such email id present in the DB
+            flash("No Such User Present, Kindly Check Your Email Id or Register First!", "fail")
+            
+        elif isValidEmail==True: #control will enter this block only if the email is correctly found but corresponding password with it isn't found
+            flash("Incorrect Password, Please Check Your Password Carefully!", "fail")
+        
+        return render_template("./login.html")
 
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
+    success=""
     if request.method == "POST":
         camera=cv2.VideoCapture(0) #to capture video through camera using openCV
         #set() gives width and height in terms of pixels
@@ -140,9 +184,10 @@ def collect():
             "face_id": int(face_id),
             "attend": {"dbms": 0, "aoa": 0, "math": 0, "os": 0, "mp":0} 
         }
-        db.attendance.insert_one(attendance_data)
+        db.students_attendance.insert_one(attendance_data)
+        success="Student Registered!"
 
-    return render_template("./recognize.html") #return "SUCCESS"
+    return render_template("./collect.html", success=success) #return "SUCCESS"
 
 selected_subject=""
 @app.route("/recognize", methods=["GET", "POST"])
@@ -199,7 +244,7 @@ def recognize():
                     id = names[id]
                     confidence = "  {0}%".format(round(100 - confidence))
                     
-                    document=db.attendance.find_one({"face_id": id})
+                    document=db.students_attendance.find_one({"face_id": id})
                     dbms=document.get("attend").get("dbms")
                     aoa=document.get("attend").get("aoa")
                     math=document.get("attend").get("math")
@@ -222,7 +267,7 @@ def recognize():
                     elif selected_subject=="Mp":
                         mp=mp+1
                         
-                    db.attendance.update_one({"face_id": id}, {"$set": {"attend.dbms": dbms, "attend.aoa": aoa, "attend.math": math, "attend.os": os, "attend.mp": mp}})
+                    db.students_attendance.update_one({"face_id": id}, {"$set": {"attend.dbms": dbms, "attend.aoa": aoa, "attend.math": math, "attend.os": os, "attend.mp": mp}})
                     flash("Attendance marked successfully!", "success")
                     
                     # students.append({"roll_number": id, "currently_attended": selected_subject, "date": datetime.now().strftime("%d:%m:%Y"), "time": datetime.now().strftime("%H:%M:%S"), "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp})
@@ -257,7 +302,6 @@ def recognize():
         cam.release()
         cv2.destroyAllWindows()
     
-    
     return render_template("./recognize.html")
 
 @app.route("/csv_main", methods=["GET", "POST"])
@@ -270,7 +314,7 @@ students=[]
 def download_csv():
     if(request.method=="POST"):
 
-        documents=db.attendance.find({})
+        documents=db.students_attendance.find({})
         for document in documents:
             id=document.get("face_id")
             dbms=document.get("attend").get("dbms")
@@ -298,7 +342,7 @@ def download_csv():
 def dashboard():
     if request.method=="POST":
         roll_no=int(request.form.get("face_id"))
-        document=db.attendance.find_one({"face_id": roll_no})
+        document=db.students_attendance.find_one({"face_id": roll_no})
         if document:
             id=document.get("face_id")
             dbms=document.get("attend").get("dbms")
