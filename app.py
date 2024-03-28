@@ -19,8 +19,15 @@ app.config["MONGO_URI"] = "mongodb+srv://chinmaytullu10:cmt175@cluster0.v20rn6t.
 db = PyMongo(app).db
 fs = gridfs.GridFS(db)
 
-@app.route("/")
+logged_in=False
+logged_in_as=None
+
+@app.route("/", methods=["GET", "POST"])
 def home():
+    if(request.method=="POST"):
+        global logged_in, logged_in_as
+        logged_in=False
+        logged_in_as=None
     return render_template("./index.html")
 
 @app.route("/login_page", methods=["GET", "POST"])
@@ -30,11 +37,27 @@ def login_page():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if(request.method=="POST"):
+        global logged_in, logged_in_as
+        
         # getting all the details filled by the user
         role=request.form.get("role")
         email=request.form.get("email-address")
         password=request.form.get("password")
         
+        # if the user is an admin
+        admin_documents=db.admin_information.find({})
+        for doc in admin_documents:
+            email1=doc.get("email")
+            
+            # if user with provided credentials is present, display success message and return the same page
+            if doc.get("role")=="admin" and email==email1 and bcrypt.checkpw(password.encode(), doc.get("hashedPassword")):
+                logged_in=True
+                logged_in_as="admin"
+                flash("Successfully Signed In!", "success")
+                flash(doc.get("name"), "username")
+                return render_template("./login.html")
+            
+            
         isEmpty=True #to check if DB is empty
         isValidEmail=False #to check if email is valid and the user exists in the DB
         documents=db.students_information.find({}) #gets all the documents from the collection
@@ -64,7 +87,15 @@ def login():
             flash("Incorrect Password, Please Check Your Password Carefully!", "fail")
         
         return render_template("./login.html")
-
+    
+@app.route("/admin_home", methods=["GET", "POST"])
+def adminHomePage():
+    # print(logged_in, logged_in_as)
+    if(logged_in==True and logged_in_as=="admin"):
+        return render_template("./admin_page.html")
+    else:
+        return "Kindly Login First"
+    
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
     success=""
@@ -355,5 +386,8 @@ def dashboard():
             return render_template("./chart.html", student=json.dumps(student)) 
     
     return render_template("./chart.html")      
+
+def check_login():
+    pass    
 
 app.run(debug=True, port=5005)
