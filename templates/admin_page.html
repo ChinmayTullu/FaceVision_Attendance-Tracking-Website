@@ -70,8 +70,17 @@
        
         <div class="mx-3 my-4">
             <div class="btn-group my-1">
-                <div class="btn btn-primary active" style="min-width: 3rem;">
-                    <i class="fa-solid fa-user-plus"></i>
+                <div class="btn btn-primary active" style="min-width: 3.15rem;">
+                    <i class="fa-solid fa-user-tie fa-xl"></i>
+                </div>
+                <button id="add-hod-btn" class="btn btn-info" style="min-width: 10rem;">
+                    <b>Add HOD</b>
+                </button>
+            </div>
+            <br>
+            <div class="btn-group my-1">
+                <div class="btn btn-primary active" style="min-width: 3.15rem;">
+                    <i class="fa-solid fa-user-plus fa-lg"></i>
                 </div>
                 <button id="add-teacher-btn" class="btn btn-info" style="min-width: 10rem;">
                     <b>Add Teacher</b>
@@ -79,8 +88,8 @@
             </div>
             <br>
             <div class="btn-group my-1">
-                <div class="btn btn-primary active" style="min-width: 3rem;">
-                    <i class="fa-solid fa-plus"></i>
+                <div class="btn btn-primary active" style="min-width: 3.15rem;">
+                    <i class="fa-solid fa-plus fa-xl"></i>
                 </div>
                 <button id="add-student-btn" class="btn btn-info" style="min-width: 10rem;">
                     <b>Add Student</b>
@@ -111,18 +120,124 @@
                     <label for="floatingPassword">Password</label>
                 </div>
 
-                <div class="my-1 text-white" id="checkbox-div">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">C1</label>
+
+                <div class="text-light my-3" id="radio-departments">
+                    <div class="form-check" style="display: inline-block;">
+                        <input class="form-check-input" type="radio" name="radio-dept" id="radio-cs">
+                        <label class="form-check-label" for="radio-cs">
+                            CS
+                        </label>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">C2</label>
+
+                    <div class="form-check mx-3" style="display: inline-block;">
+                        <input class="form-check-input" type="radio" name="radio-dept" id="radio-it">
+                        <label class="form-check-label" for="radio-it">
+                            IT
+                        </label>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">C3</label>
+
+                    <div class="form-check" style="display: inline-block;">
+                        <input class="form-check-input" type="radio" name="radio-dept" id="radio-aids">
+                        <label class="form-check-label" for="radio-aids">
+                            AIDS
+                        </label>
+                    </div>
+                </div>
+
+
+                <div class="my-3 text-white" id="checkbox-div">
+                    <div id="checkbox-cs">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input checkbox-cs" type="checkbox" id="cs-division-1" value="option1">
+                            <label class="form-check-label" for="cs-division-1">C1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input checkbox-cs" type="checkbox" id="cs-division-2" value="option2">
+                            <label class="form-check-label" for="cs-division-2">C2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input checkbox-cs" type="checkbox" id="cs-division-3" value="option1">
+                            <label class="form-check-label" for="cs-division-3">C3</label>
+                        </div>
+                    </div>
+
+                    <div id="checkbox-it">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input checkbox-it" type="checkbox" id="it-division-1" value="option1">
+                            <label class="form-check-label" for="it-division-1">S1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input checkbox-it" type="checkbox" id="it-division-2" value="option2">
+                            <label class="form-check-label" for="it-division-2">S2</label>
+                        </div>
+                    </div>
+
+                    <div id="checkbox-aids">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input checkbox-aids" type="checkbox" id="aids-division-1" value="option1">
+                            <label class="form-check-label" for="aids-division-1">A1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input checkbox-aids" type="checkbox" id="aids-division-2" value="option2">
+                            <label class="form-check-label" for="aids-division-2">A2</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-light my-2" id="radio-div">
+                    <div id="student-radio-cs">
+                        <div class="form-check" style="display: inline-block;">
+                            <input class="form-check-input" type="radio" name="cs-radio-division" id="radio-c1">
+                            <label class="form-check-label" for="radio-c1">
+                                C1
+                            </label>
+                        </div>
+    
+                        <div class="form-check mx-3" style="display: inline-block;">
+                            <input class="form-check-input" type="radio" name="cs-radio-division" id="radio-c2">
+                            <label class="form-check-label" for="radio-c2">
+                                C2
+                            </label>
+                        </div>
+    
+                        <div class="form-check" style="display: inline-block;">
+                            <input class="form-check-input" type="radio" name="cs-radio-division" id="radio-c3">
+                            <label class="form-check-label" for="radio-c3">
+                                C3
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="student-radio-it">
+                        <div class="form-check" style="display: inline-block;">
+                            <input class="form-check-input" type="radio" name="it-radio-division" id="radio-s1">
+                            <label class="form-check-label" for="radio-s1">
+                                S1
+                            </label>
+                        </div>
+    
+                        <div class="form-check mx-3" style="display: inline-block;">
+                            <input class="form-check-input" type="radio" name="it-radio-division" id="radio-s2">
+                            <label class="form-check-label" for="radio-s2">
+                                S2
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="student-radio-aids">
+                        <div class="form-check" style="display: inline-block;">
+                            <input class="form-check-input" type="radio" name="aids-radio-division" id="radio-a1">
+                            <label class="form-check-label" for="radio-a1">
+                                A1
+                            </label>
+                        </div>
+    
+                        <div class="form-check mx-3" style="display: inline-block;">
+                            <input class="form-check-input" type="radio" name="aids-radio-division" id="radio-a2">
+                            <label class="form-check-label" for="radio-a2">
+                                A2
+                            </label>
+                        </div>
                     </div>
                 </div>
                 
@@ -136,6 +251,6 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"
         ></script>
-        <script src="..//static/scripts/admin_page.js"></script>
+        <script src="../static/scripts/admin_page.js"></script>
     </body>
 </html>

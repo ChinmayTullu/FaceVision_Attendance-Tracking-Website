@@ -1,16 +1,15 @@
-import json
-import tempfile
-from flask import flash
-import os as osm
 # import io
 # from PIL import Image
 from datetime import datetime
 import cv2
 import numpy as np
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, flash, redirect, url_for
 from flask_pymongo import PyMongo
 import gridfs
 import bcrypt
+import json
+import tempfile
+import os as osm
 import csv
 
 app = Flask(__name__)
@@ -22,6 +21,7 @@ fs = gridfs.GridFS(db)
 logged_in=False
 logged_in_as=None
 
+
 @app.route("/", methods=["GET", "POST"])
 def home():
     if(request.method=="POST"):
@@ -30,10 +30,22 @@ def home():
         logged_in_as=None
     return render_template("./index.html")
 
+
 @app.route("/login_page", methods=["GET", "POST"])
 def login_page():
+    if(logged_in==True):
+        if(logged_in_as=="admin"):
+            return redirect(url_for("admin_home_page"))
+        elif(logged_in_as=="teacher"):
+            return redirect(url_for("teacher_home_page"))
+        elif(logged_in_as=="hod"):
+            return redirect(url_for("hod_home_page"))     
+        else:
+            return redirect(url_for("student_home_page"))
+            
     return render_template("./login.html")
     
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if(request.method=="POST"):
@@ -55,8 +67,7 @@ def login():
                 logged_in_as="admin"
                 flash("Successfully Signed In!", "success")
                 flash(doc.get("name"), "username")
-                return render_template("./login.html")
-            
+                return render_template("./login.html")            
             
         isEmpty=True #to check if DB is empty
         isValidEmail=False #to check if email is valid and the user exists in the DB
@@ -88,13 +99,39 @@ def login():
         
         return render_template("./login.html")
     
+
 @app.route("/admin_home", methods=["GET", "POST"])
-def adminHomePage():
+def admin_home_page():
     # print(logged_in, logged_in_as)
     if(logged_in==True and logged_in_as=="admin"):
         return render_template("./admin_page.html")
     else:
         return "Kindly Login First"
+    
+
+@app.route("/hod_home", methods=["GET", "POST"])
+def hod_home_page():
+    if(logged_in==True and logged_in_as=="hod"):
+        return render_template("./hod_page.html")
+    else:
+        return "Kindly Login First"    
+
+
+@app.route("/teacher_home", methods=["GET", "POST"])
+def teacher_home_page():
+    if(logged_in==True and logged_in_as=="teacher"):
+        return render_template("./teacher_page.html")
+    else:
+        return "Kindly Login First"
+
+
+@app.route("/student_home", methods=["GET", "POST"])
+def student_home_page():
+    if(logged_in==True and logged_in_as=="student"):
+        return render_template("./student_page.html")
+    else:
+        return "Kindly Login First"
+
     
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
@@ -220,6 +257,7 @@ def collect():
 
     return render_template("./collect.html", success=success) #return "SUCCESS"
 
+
 selected_subject=""
 @app.route("/recognize", methods=["GET", "POST"])
 def recognize():
@@ -335,10 +373,12 @@ def recognize():
     
     return render_template("./recognize.html")
 
+
 @app.route("/csv_main", methods=["GET", "POST"])
 def csv_main():
     if(request.method=="POST"):
         return render_template("./downloadCSV.html")
+
 
 students=[]
 @app.route("/csv_download", methods=["GET", "POST"])
@@ -369,25 +409,35 @@ def download_csv():
             
         return send_file(file_path, as_attachment=True, download_name="AttendanceList.csv") 
     
+
 @app.route("/student_dashboard", methods=["GET", "POST"])
 def dashboard():
-    if request.method=="POST":
-        roll_no=int(request.form.get("face_id"))
-        document=db.students_attendance.find_one({"face_id": roll_no})
-        if document:
-            id=document.get("face_id")
-            dbms=document.get("attend").get("dbms")
-            aoa=document.get("attend").get("aoa")
-            math=document.get("attend").get("math")
-            os=document.get("attend").get("os")
-            mp=document.get("attend").get("mp")
-            student={"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp}
-            print(json.dumps(student))
-            return render_template("./chart.html", student=json.dumps(student)) 
+    if(logged_in==True and (logged_in_as=="admin" or logged_in_as=="teacher" or logged_in_as=="hod")):
+        if request.method=="POST":
+            roll_no=int(request.form.get("face_id"))
+            document=db.students_attendance.find_one({"face_id": roll_no})
+            if document:
+                id=document.get("face_id")
+                dbms=document.get("attend").get("dbms")
+                aoa=document.get("attend").get("aoa")
+                math=document.get("attend").get("math")
+                os=document.get("attend").get("os")
+                mp=document.get("attend").get("mp")
+                student={"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp}
+                print(json.dumps(student))
+                return render_template("./chart.html", student=json.dumps(student)) 
+            
+        return render_template("./chart.html")  
     
-    return render_template("./chart.html")      
+    elif(logged_in_as=="student"):
+        return "You don't have the access to this :)"
+    
+    else:
+        return "Kindly Login First"    
+
 
 def check_login():
     pass    
+
 
 app.run(debug=True, port=5005)
