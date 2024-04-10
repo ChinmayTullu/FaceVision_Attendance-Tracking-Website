@@ -4,128 +4,132 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>FaceVision | Recognize</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
-    <body
-        class="mt-0 mb-5"
-        style="font-family: 'Montserrat', sans-serif; background-color: #1f2641"
-    >
-        <div>
-            <nav
-                class="navbar navbar-expand-lg mb-2"
-                data-bs-theme="dark"
-                style="background-color: #363f5f"
-            >
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="/" style="font-weight: bold">FaceVision</a>
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item mx-2">
-                                <a class="nav-link active" aria-current="page" href="#">Home</a>
-                            </li>
-                            <li class="nav-item mx-2">
-                                <a class="nav-link active" aria-current="page" href="/collect">Verify Attendance</a>
-                            </li>
-                            <li class="nav-item mx-2">
-                                <a class="nav-link active" aria-current="page" href="/student_dashboard" target="_blank">Dashboard</a>
-                            </li>
-                            <li class="nav-item mx-2">
-                                <a class="nav-link active" aria-current="page" href="#">Contact</a>
-                            </li>
-                        </ul>
-
-                        <form action="/csv_main" method="post" enctype="multipart/form-data">
-                            <button class="btn btn-outline-success" type="submit">
-                                Attendance List
-                            </button>
-                        </form>
-
-                    </div>
-                </div>
-            </nav>
-        </div>
-
-        <br /><br />
-
-        <form action="/recognize" method="post" enctype="multipart/form-data">
-            <div class="container mt-5 mx-auto" style="width: max-content">
-                <label for="subject" class="text-white">Select subject:</label>
-                <select id="subject" name="subject" class="">
-                    <option value="Dbms" selected>Database Management Systems</option>
-                    <option value="Aoa">Analysis of Algorithm</option>
-                    <option value="Math">Mathematics IV</option>
-                    <option value="Os">Operating Systems</option>
-                    <option value="Mp">Microprocessor</option>
-                </select>
-                &emsp;&emsp;&emsp;&emsp;
-                <button style="font-weight: 450" type="submit" class="btn btn-outline-info btn-lg">
-                    Verify Face
-                </button>
-            </div>
-        </form>
-
-        {% with messages = get_flashed_messages() %} 
-            {% if messages %} 
-                {% for message in messages %}
-                    <br /><br />
-                    <div
-                    class="container"
-                    style="
-                        width: 40%;
-                        margin: 50px auto;
-                        background-color: #1d1879;
-                        padding: 13px;
-                        border-radius: 5px;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                        text-align: center;
-                        align-items: center;
-                        justify-content: center;
-                        "
-                    >
-                        <p class="text-white" style="font-size: 1.15rem">{{ message }}</p>
-                    </div>
-                {% endfor %} 
-            {% endif %}     
-        {% endwith %}
-
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
         <style>
-            /* Style the label */
-            label {
-                color: white;
-                margin-right: 20px;
+            .login-container {
+                background-color: rgba(255, 155, 255, 0.15);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                margin: 50px auto;
+                padding: 20px 30px;
+                width: 400px;
+                box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5); 
             }
-
-            /* Style the select dropdown */
+            .btn-outline-info {
+                color: white !important;
+                border-color: white !important;
+            }
+            label {
+              color: white;
+              margin-right: 20px;
+            }
             select {
-                padding: 5px;
-                font-size: 16px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                background-color: white;
-                color: #333;
+              padding: 5px;
+              font-size: 16px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              background-color: white;
+              color: gray; /* Grayed-out color for placeholder text */
+            }
+            select option:first-child {
+              display: none;
+            }
+            select:focus {
+              color: black;
             }
         </style>
+    </head>
+<body class="mt-0 mb-5"style="font-family: 'Montserrat', sans-serif; background-color: #1f2641">
+    <div>
+        <nav class="navbar navbar-expand-lg mb-2" data-bs-theme="dark" style="background-color: #363f5f;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/" style="font-weight: bold">FaceVision</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item mx-2">
+                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link active" aria-current="page" href="/collect">Attendance</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link active" aria-current="page" href="/student_dashboard" target="blank">Dashboard</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link active" aria-current="page" href="#">Contact</a>
+                        </li>
+                    </ul>
 
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-    </body>
+                    <form action="/csv_main" method="post" enctype="multipart/form-data">
+                        <button class="btn btn-outline-success" type="submit">
+                            Attendance List
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <br /><br />
+
+    <form action="/recognize" method="post" enctype="multipart/form-data">
+        <div class="container mt-5 mx-auto" style="width: max-content">
+            <div class="login-container">
+                <div class="mt blank">
+                    <div class="col-md-12 text-center">
+                        
+                        <select id="subject" name="subject" class="">
+                            <option value="">Select subject</option>
+                            <option value="Aoa">Analysis of Algorithm</option>
+                            <option value="Dbms">Database Management Systems</option>
+                            <option value="Math">Mathematics IV</option>
+                            <option value="Mp">Microprocessor</option>
+                            <option value="Os">Operating Systems</option>
+                        </select>
+                        
+                        <br><br>
+                        <button style="font-weight: 450" type="submit" class="btn btn-outline-info btn-lg">
+                            Verify Face
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% with messages = get_flashed_messages() %} 
+        {% if messages %} 
+            {% for message in messages %}
+                <br /><br />
+                <div
+                class="container"
+                style="
+                    width: 40%;
+                    margin: 50px auto;
+                    background-color: #1d1879;
+                    padding: 13px;
+                    border-radius: 5px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                    align-items: center;
+                    justify-content: center;
+                    "
+                >
+                    <p class="text-white" style="font-size: 1.15rem">{{ message }}</p>
+                </div>
+            {% endfor %} 
+        {% endif %}     
+    {% endwith %}
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous">
+    </script>
+</body>
 </html>
