@@ -4,6 +4,8 @@ let addTeacher=document.querySelector("#add-teacher-btn");
 let addStudent=document.querySelector("#add-student-btn");
 let addHOD=document.querySelector("#add-hod-btn");
 
+let inputSubject=document.querySelector("#subject-div");
+
 let HODradio=document.querySelector("#radio-departments");
 let radiosDept=document.getElementsByName("radio-dept");
 
@@ -48,9 +50,11 @@ addHOD.addEventListener("click", () => {
     unselectAllRadios(radiosDept);
 
     registrationForm.style.visibility="visible";
-    HODradio.style.display="block";
-    teacherCheckbox.style.display="none";
-    studentRadio.style.display="none";
+    inputSubject.style.display="block";
+    displayOneAndHideOthers(HODradio, teacherCheckbox, studentRadio);
+    // HODradio.style.display="block";
+    // teacherCheckbox.style.display="none";
+    // studentRadio.style.display="none";
 
     submitBtn.innerText="Add HOD";
 });
@@ -64,9 +68,11 @@ addTeacher.addEventListener("click", () => {
 
     registrationForm.style.visibility="visible";
     submitBtn.innerText="Add Teacher";
-    HODradio.style.display="block";
-    teacherCheckbox.style.display="none";
-    studentRadio.style.display="none";
+    inputSubject.style.display="block";
+    displayOneAndHideOthers(HODradio, teacherCheckbox, studentRadio);
+    // HODradio.style.display="block";
+    // teacherCheckbox.style.display="none";
+    // studentRadio.style.display="none";
     
     for(let radio of radiosDept) {
 
@@ -96,9 +102,11 @@ addStudent.addEventListener("click", () => {
     unselectAllRadios(document.getElementsByName("aids-radio-division"));
 
     registrationForm.style.visibility="visible";
-    HODradio.style.display="block";
-    teacherCheckbox.style.display="none";
-    studentRadio.style.display="none";
+    inputSubject.style.display="none";
+    displayOneAndHideOthers(HODradio, teacherCheckbox, studentRadio);
+    // HODradio.style.display="block";
+    // teacherCheckbox.style.display="none";
+    // studentRadio.style.display="none";
     
     submitBtn.innerText="Add Student";
 
