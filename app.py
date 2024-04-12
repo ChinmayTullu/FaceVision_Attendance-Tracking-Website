@@ -141,9 +141,17 @@ def register():
         phNo=request.form.get("phone-number")
         email=request.form.get("email-address")
         password=request.form.get("password")
+        hashed_password=bcrypt.hashpw(password.encode(), bcrypt.gensalt()) #takes UTF-8 encoding by default
         subject=request.form.get("subject")
         
-        hashed_password=bcrypt.hashpw(password.encode(), bcrypt.gensalt()) #takes UTF-8 encoding by default
+        department=request.form.get("radio-dept")
+        division_checkboxes=request.form.getlist("checkbox-input")
+        division_radio=request.form.get("radio-division")
+        
+        print(full_name, phNo, email, hashed_password, subject)
+        print(department)
+        print(division_checkboxes)
+        print(division_radio)
         
         isEmpty=True #to check if DB is empty
         isValid=True #to check if info is valid to add in the DB
