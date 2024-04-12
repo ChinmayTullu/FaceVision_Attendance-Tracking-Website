@@ -7,13 +7,25 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" 
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    <style>
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+            color: white;
+        }
+        .welcome {
+            color: white;
+            font-size: 18px;
+            margin-right: 40px;
+        }
+    </style>
 </head>
-<body class="mt-0 mb-5" style="font-family: 'Montserrat', sans-serif; background-color: #1f2641">
+<body style="font-family: 'Montserrat', sans-serif; background-color: #1f2641">
 
     <div>
         <nav class="navbar navbar-expand-lg mb-2" data-bs-theme="dark" style="background-color: #363f5f;">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/" style="font-weight: bold">FaceVision</a>
+                <a class="navbar-brand logo" href="/">FaceVision</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -26,12 +38,17 @@
                             <a class="nav-link active" aria-current="page" href="/collect">Attendance</a>
                         </li>
                         <li class="nav-item mx-2">
-                            <a class="nav-link active" aria-current="page" href="/student_dashboard">Dashboard</a>
+                            <a class="nav-link active" aria-current="page" href="/student_dashboard" target="blank">Dashboard</a>
                         </li>
                         <li class="nav-item mx-2">
                             <a class="nav-link active" aria-current="page" href="#">Contact</a>
                         </li>
                     </ul>
+                    <div class="ms-auto">
+                        <button class="btn btn-outline-info" type="submit">
+                            <a style="text-decoration: none; color: white;" href="/login_page">Login</a>
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -39,16 +56,29 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-6 text-center">
-                <div class="alert alert-primary" role="alert">
-                    <h4 class="alert-heading"><a style="font-weight: bold">Welcome to FaceVision - Your Ultimate Attendance Tracking Solution!</a></h4>
-                    <hr>
-                    <p>
-                        At FaceVision, we revolutionize the traditional approach to attendance tracking by leveraging cutting-edge face recognition technology. Say goodbye to cumbersome manual attendance registers and hello to seamless, accurate, and efficient attendance management.
-                    </p>
+            <div class="col-md-12 text-center">
+                <div class="text-center mt-3 welcome">
+                    <p class="text-white" style="font-size: 3rem;">FaceVisison</p>
+                    <br>
                 </div>
-                <div class="container">
-                        <a href="/login_page"><button class="btn btn-outline-warning my-2">Login</button></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="text-center mt-4 welcome">
+                    <div class="alert alert-primary" role="alert">
+                        <h4 class="alert-heading">Welcome to FaceVision - Your Ultimate Attendance Tracking Solution!</h4>
+                        <hr>
+                        <p>At FaceVision, we revolutionize the traditional approach to attendance tracking by leveraging cutting-edge face recognition technology. Say goodbye to cumbersome manual attendance registers and hello to seamless, accurate, and efficient attendance management.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="text-center mt-4">
+                    <img src="../static/images/index_gif.gif" alt="Your GIF" style="width: 100%;">
                 </div>
             </div>
         </div>
