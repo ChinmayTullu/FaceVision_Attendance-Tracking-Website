@@ -18,7 +18,7 @@ function redirectAfterDelay() {
     setTimeout(() => {
         if(username==="admin")
             window.location.href = "/admin_home";
-    }, 4000); // 4 seconds delay, showing the loader and redirecting back to home page
+    }, 0); // 0 seconds delay, showing the loader and redirecting back to home page
 }
 
 let messageDiv = document.querySelector(".text-success"); 

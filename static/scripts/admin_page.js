@@ -5,6 +5,7 @@ let addStudent=document.querySelector("#add-student-btn");
 let addHOD=document.querySelector("#add-hod-btn");
 
 let inputSubject=document.querySelector("#subject-div");
+let inputRollNo=document.querySelector("#rollno-div");
 
 let HODradio=document.querySelector("#radio-departments");
 let radiosDept=document.getElementsByName("radio-dept");
@@ -42,15 +43,16 @@ let displayOneAndHideOthers = (show, hide1, hide2) => {
 }
 
 window.addEventListener("load", () => {
-    registrationForm.style.visibility="hidden";
+    registrationForm.style.display="none";
 });
 
 addHOD.addEventListener("click", () => {
     roleSelected="hod";
     unselectAllRadios(radiosDept);
 
-    registrationForm.style.visibility="visible";
+    registrationForm.style.display="block";
     inputSubject.style.display="block";
+    inputRollNo.style.display="none";
     displayOneAndHideOthers(HODradio, teacherCheckbox, studentRadio);
     // HODradio.style.display="block";
     // teacherCheckbox.style.display="none";
@@ -66,13 +68,15 @@ addTeacher.addEventListener("click", () => {
     uncheckAllCheckboxes(document.querySelectorAll(".checkbox-it"));
     uncheckAllCheckboxes(document.querySelectorAll(".checkbox-aids"));
 
-    registrationForm.style.visibility="visible";
-    submitBtn.innerText="Add Teacher";
+    registrationForm.style.display="block";
     inputSubject.style.display="block";
+    inputRollNo.style.display="none";
     displayOneAndHideOthers(HODradio, teacherCheckbox, studentRadio);
     // HODradio.style.display="block";
     // teacherCheckbox.style.display="none";
     // studentRadio.style.display="none";
+
+    submitBtn.innerText="Add Teacher";
     
     for(let radio of radiosDept) {
 
@@ -101,8 +105,9 @@ addStudent.addEventListener("click", () => {
     unselectAllRadios(document.getElementsByName("it-radio-division"));
     unselectAllRadios(document.getElementsByName("aids-radio-division"));
 
-    registrationForm.style.visibility="visible";
+    registrationForm.style.display="block";
     inputSubject.style.display="none";
+    inputRollNo.style.display="block";
     displayOneAndHideOthers(HODradio, teacherCheckbox, studentRadio);
     // HODradio.style.display="block";
     // teacherCheckbox.style.display="none";

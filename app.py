@@ -132,6 +132,64 @@ def student_home_page():
     else:
         return "Kindly Login First"
 
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if(request.method=="POST"):
+        # getting all the details filled by the user
+        full_name=request.form.get("full-name")
+        phNo=request.form.get("phone-number")
+        email=request.form.get("email-address")
+        password=request.form.get("password")
+        subject=request.form.get("subject")
+        
+        hashed_password=bcrypt.hashpw(password.encode(), bcrypt.gensalt()) #takes UTF-8 encoding by default
+        
+        isEmpty=True #to check if DB is empty
+        isValid=True #to check if info is valid to add in the DB
+        # documents=db.information.find({}) #gets all the documents from the collection
+        
+        # for document in documents:
+        #     isEmpty=False               
+        
+        #     # if user or any details provided already exist, display failure message 
+        #     if full_name==document.get("name"):
+        #         flash("Username Already in Use!", "fail")
+        #         isValid=False
+        #     elif phNo==document.get("phoneNo"):
+        #         flash("Phone Number Already in Use!", "fail")
+        #         isValid=False
+        #     elif email==document.get("email"):
+        #         flash("Email Id Already in Use!", "fail")
+        #         isValid=False
+        #     elif bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+        #         flash("Password Already in Use!", "fail") #checking hashed passwords and displaying message accordingly
+        #         isValid=False
+        #     elif password==document.get("password"): # just to check matching of the decoded password, control will never get in this block
+        #         flash("Password Already in Use!", "fail")
+        #         isValid=False
+            
+        #     if isValid==False: 
+        #         return render_template("./register.html") #returns the same page to re-enter the details 
+                
+        # # if DB is empty or info provided is valid, insert it in the DB
+        # if isEmpty==True or isValid==True:
+        #     print("Entering info of", full_name)
+        #     student_info = {
+        #         "name": full_name,
+        #         "phoneNo": phNo,
+        #         "email": email,
+        #         "password": password,
+        #         "subject": subject,
+        #         "hashedPassword": hashed_password
+        #     }
+        #     db.information.insert_one(student_info)
+        #     flash("Successfully Registered!", "success")
+        
+        # return render_template("./register.html")
+    
+    return render_template("./admin_page.html")
+
     
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
