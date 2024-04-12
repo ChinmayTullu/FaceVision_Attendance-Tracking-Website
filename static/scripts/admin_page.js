@@ -22,6 +22,8 @@ let aidsRadio=document.querySelector("#student-radio-aids");
 
 let submitBtn=document.querySelector("#submit-form-btn");
 
+let role=document.querySelector("#selected-role")
+
 let roleSelected="";
 
 let unselectAllRadios = (radios) => {
@@ -59,6 +61,7 @@ addHOD.addEventListener("click", () => {
     // studentRadio.style.display="none";
 
     submitBtn.innerText="Add HOD";
+    role.value=roleSelected;
 });
 
 addTeacher.addEventListener("click", () => {
@@ -77,6 +80,7 @@ addTeacher.addEventListener("click", () => {
     // studentRadio.style.display="none";
 
     submitBtn.innerText="Add Teacher";
+    role.value=roleSelected;
     
     for(let radio of radiosDept) {
 
@@ -114,6 +118,7 @@ addStudent.addEventListener("click", () => {
     // studentRadio.style.display="none";
     
     submitBtn.innerText="Add Student";
+    role.value=roleSelected;
 
     for(let radio of radiosDept) {
 

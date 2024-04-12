@@ -143,60 +143,153 @@ def register():
         password=request.form.get("password")
         hashed_password=bcrypt.hashpw(password.encode(), bcrypt.gensalt()) #takes UTF-8 encoding by default
         subject=request.form.get("subject")
+        roll_no=request.form.get("rollno")
         
         department=request.form.get("radio-dept")
         division_checkboxes=request.form.getlist("checkbox-input")
         division_radio=request.form.get("radio-division")
         
-        print(full_name, phNo, email, hashed_password, subject)
-        print(department)
-        print(division_checkboxes)
-        print(division_radio)
+        selected_role=request.form.get("selected-role")
         
         isEmpty=True #to check if DB is empty
         isValid=True #to check if info is valid to add in the DB
-        # documents=db.information.find({}) #gets all the documents from the collection
         
-        # for document in documents:
-        #     isEmpty=False               
+        if(selected_role=="hod"):
+            documents=db.hods_information.find({}) #gets all the documents from the collection
         
-        #     # if user or any details provided already exist, display failure message 
-        #     if full_name==document.get("name"):
-        #         flash("Username Already in Use!", "fail")
-        #         isValid=False
-        #     elif phNo==document.get("phoneNo"):
-        #         flash("Phone Number Already in Use!", "fail")
-        #         isValid=False
-        #     elif email==document.get("email"):
-        #         flash("Email Id Already in Use!", "fail")
-        #         isValid=False
-        #     elif bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
-        #         flash("Password Already in Use!", "fail") #checking hashed passwords and displaying message accordingly
-        #         isValid=False
-        #     elif password==document.get("password"): # just to check matching of the decoded password, control will never get in this block
-        #         flash("Password Already in Use!", "fail")
-        #         isValid=False
-            
-        #     if isValid==False: 
-        #         return render_template("./register.html") #returns the same page to re-enter the details 
+            for document in documents:
+                isEmpty=False               
+        
+                # if user or any details provided already exist, display failure message 
+                if full_name==document.get("name"):
+                    flash("Username Already in Use!", "fail")
+                    isValid=False
+                elif phNo==document.get("phoneNo"):
+                    flash("Phone Number Already in Use!", "fail")
+                    isValid=False
+                elif email==document.get("email"):
+                    flash("Email Id Already in Use!", "fail")
+                    isValid=False
+                elif bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    flash("Password Already in Use!", "fail") #checking hashed passwords and displaying message accordingly
+                    isValid=False
+                elif password==document.get("password"): # just to check matching of the decoded password, control will never get in this block
+                    flash("Password Already in Use!", "fail")
+                    isValid=False
                 
-        # # if DB is empty or info provided is valid, insert it in the DB
-        # if isEmpty==True or isValid==True:
-        #     print("Entering info of", full_name)
-        #     student_info = {
-        #         "name": full_name,
-        #         "phoneNo": phNo,
-        #         "email": email,
-        #         "password": password,
-        #         "subject": subject,
-        #         "hashedPassword": hashed_password
-        #     }
-        #     db.information.insert_one(student_info)
-        #     flash("Successfully Registered!", "success")
+                if isValid==False: 
+                    return "Fail" #returns the same page to re-enter the details 
+                    
+            # if DB is empty or info provided is valid, insert it in the DB
+            if(isEmpty==True or isValid==True):
+                print("Entering info of", full_name)
+                hod_info = {
+                    "name": full_name,
+                    "phoneNo": phNo,
+                    "email": email,
+                    "password": password,
+                    "hashedPassword": hashed_password,
+                    "subject": subject,
+                    "department": department,
+                    "date": datetime.now().strftime("%d-%m-%Y"),
+                    "time": datetime.now().strftime("%H:%M:%S")
+                }
+                db.hods_information.insert_one(hod_info)
+                flash("Successfully Registered!", "success")
+            
+            return "Success"
         
-        # return render_template("./register.html")
-    
-    return render_template("./admin_page.html")
+        if(selected_role=="teacher"):
+            documents=db.teachers_information.find({}) #gets all the documents from the collection
+        
+            for document in documents:
+                isEmpty=False               
+        
+                # if user or any details provided already exist, display failure message 
+                if full_name==document.get("name"):
+                    flash("Username Already in Use!", "fail")
+                    isValid=False
+                elif phNo==document.get("phoneNo"):
+                    flash("Phone Number Already in Use!", "fail")
+                    isValid=False
+                elif email==document.get("email"):
+                    flash("Email Id Already in Use!", "fail")
+                    isValid=False
+                elif bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    flash("Password Already in Use!", "fail") #checking hashed passwords and displaying message accordingly
+                    isValid=False
+                elif password==document.get("password"): # just to check matching of the decoded password, control will never get in this block
+                    flash("Password Already in Use!", "fail")
+                    isValid=False
+                
+                if isValid==False: 
+                    return "Fail" #returns the same page to re-enter the details 
+                    
+            # if DB is empty or info provided is valid, insert it in the DB
+            if(isEmpty==True or isValid==True):
+                print("Entering info of", full_name)
+                teacher_info = {
+                    "name": full_name,
+                    "phoneNo": phNo,
+                    "email": email,
+                    "password": password,
+                    "hashedPassword": hashed_password,
+                    "subject": subject,
+                    "department": department,
+                    "divisions": division_checkboxes,
+                    "date": datetime.now().strftime("%d-%m-%Y"),
+                    "time": datetime.now().strftime("%H:%M:%S")
+                }
+                db.teachers_information.insert_one(teacher_info)
+                flash("Successfully Registered!", "success")
+            
+            return "Success"
+        
+        if(selected_role=="student"):
+            documents=db.students_information.find({}) #gets all the documents from the collection
+        
+            for document in documents:
+                isEmpty=False               
+        
+                # if user or any details provided already exist, display failure message 
+                if full_name==document.get("name"):
+                    flash("Username Already in Use!", "fail")
+                    isValid=False
+                elif phNo==document.get("phoneNo"):
+                    flash("Phone Number Already in Use!", "fail")
+                    isValid=False
+                elif email==document.get("email"):
+                    flash("Email Id Already in Use!", "fail")
+                    isValid=False
+                elif bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    flash("Password Already in Use!", "fail") #checking hashed passwords and displaying message accordingly
+                    isValid=False
+                elif password==document.get("password"): # just to check matching of the decoded password, control will never get in this block
+                    flash("Password Already in Use!", "fail")
+                    isValid=False
+                
+                if isValid==False: 
+                    return "Fail" #returns the same page to re-enter the details 
+                    
+            # if DB is empty or info provided is valid, insert it in the DB
+            if(isEmpty==True or isValid==True):
+                print("Entering info of", full_name)
+                student_info = {
+                    "name": full_name,
+                    "phoneNo": phNo,
+                    "email": email,
+                    "password": password,
+                    "hashedPassword": hashed_password,
+                    "roll number": roll_no,
+                    "department": department,
+                    "division": division_radio,
+                    "date": datetime.now().strftime("%d-%m-%Y"),
+                    "time": datetime.now().strftime("%H:%M:%S")
+                }
+                db.students_information.insert_one(student_info)
+                flash("Successfully Registered!", "success")
+            
+            return "Success"
 
     
 @app.route("/collect", methods=["GET", "POST"])
