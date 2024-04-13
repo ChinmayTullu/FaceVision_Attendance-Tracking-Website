@@ -67,36 +67,92 @@ def login():
                 logged_in_as="admin"
                 flash("Successfully Signed In!", "success")
                 flash(doc.get("name"), "username")
-                return render_template("./login.html")            
+                return render_template("./login.html")
             
         isEmpty=True #to check if DB is empty
         isValidEmail=False #to check if email is valid and the user exists in the DB
-        documents=db.students_information.find({}) #gets all the documents from the collection
         
-        for document in documents:
-            isEmpty=False
-            email1=document.get("email")
+        if(role=="hod"):
+            documents=db.hods_information.find({}) #gets all the documents from the collection
+        
+            for document in documents:
+                isEmpty=False
+                email1=document.get("email")
+                
+                # if user with provided credentials is present, display success message and return the same page
+                if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    flash("Successfully Signed In!", "success")
+                    flash(document.get("name"), "username")
+                    return render_template("./login.html")
+                
+                # to check if at least the email exists in the DB
+                if isValidEmail==False:
+                    if email==email1:
+                        isValidEmail=True
             
-            # if user with provided credentials is present, display success message and return the same page
-            if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
-                flash("Successfully Signed In!", "success")
-                flash(document.get("name"), "username")
-                return render_template("./login.html")
+            if isEmpty==True: #if the DB is empty
+                flash("No Users Present, Kindly Register Before Logging In!", "fail")
             
-            # to check if at least the email exists in the DB
-            if isValidEmail==False:
-                if email==email1:
-                    isValidEmail=True
-        
-        if isEmpty==True: #if the DB is empty
-            flash("No Users Present, Kindly Register Before Logging In!", "fail")
-        
-        elif isValidEmail==False: #if there is no such email id present in the DB
-            flash("No Such User Present, Kindly Check Your Email Id or Register First!", "fail")
+            elif isValidEmail==False: #if there is no such email id present in the DB
+                flash("No Such User Present, Kindly Check Your Email Id or Register First!", "fail")
+                
+            elif isValidEmail==True: #control will enter this block only if the email is correctly found but corresponding password with it isn't found
+                flash("Incorrect Password, Please Check Your Password Carefully!", "fail")
             
-        elif isValidEmail==True: #control will enter this block only if the email is correctly found but corresponding password with it isn't found
-            flash("Incorrect Password, Please Check Your Password Carefully!", "fail")
+        elif(role=="teacher"):   
+            documents=db.teachers_information.find({}) #gets all the documents from the collection
         
+            for document in documents:
+                isEmpty=False
+                email1=document.get("email")
+                
+                # if user with provided credentials is present, display success message and return the same page
+                if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    flash("Successfully Signed In!", "success")
+                    flash(document.get("name"), "username")
+                    return render_template("./login.html")
+                
+                # to check if at least the email exists in the DB
+                if isValidEmail==False:
+                    if email==email1:
+                        isValidEmail=True
+            
+            if isEmpty==True: #if the DB is empty
+                flash("No Users Present, Kindly Register Before Logging In!", "fail")
+            
+            elif isValidEmail==False: #if there is no such email id present in the DB
+                flash("No Such User Present, Kindly Check Your Email Id or Register First!", "fail")
+                
+            elif isValidEmail==True: #control will enter this block only if the email is correctly found but corresponding password with it isn't found
+                flash("Incorrect Password, Please Check Your Password Carefully!", "fail")
+            
+        elif(role=="student"):        
+            documents=db.students_information.find({}) #gets all the documents from the collection
+            
+            for document in documents:
+                isEmpty=False
+                email1=document.get("email")
+                
+                # if user with provided credentials is present, display success message and return the same page
+                if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    flash("Successfully Signed In!", "success")
+                    flash(document.get("name"), "username")
+                    return render_template("./login.html")
+                
+                # to check if at least the email exists in the DB
+                if isValidEmail==False:
+                    if email==email1:
+                        isValidEmail=True
+            
+            if isEmpty==True: #if the DB is empty
+                flash("No Users Present, Kindly Register Before Logging In!", "fail")
+            
+            elif isValidEmail==False: #if there is no such email id present in the DB
+                flash("No Such User Present, Kindly Check Your Email Id or Register First!", "fail")
+                
+            elif isValidEmail==True: #control will enter this block only if the email is correctly found but corresponding password with it isn't found
+                flash("Incorrect Password, Please Check Your Password Carefully!", "fail")
+            
         return render_template("./login.html")
     
 

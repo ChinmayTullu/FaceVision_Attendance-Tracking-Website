@@ -1,5 +1,10 @@
 let loader = document.getElementById("loading");
 let mainLoader = document.querySelector(".spinner-border");
+let roleDiv = document.querySelector("#select-role");
+let selectedOption = roleDiv.options[roleDiv.selectedIndex];
+role=selectedOption.value;
+console.log(roleDiv)
+console.log(selectedOption)
 
 //only for login 
 //start
@@ -16,8 +21,11 @@ function redirectAfterDelay() {
     loader.classList.remove("d-none");
     mainLoader.classList.remove("visually-hidden");
     setTimeout(() => {
+        console.log(role);
         if(username==="admin")
             window.location.href = "/admin_home";
+        else if(username==="hod")
+            window.location.href = "/hod_home";
     }, 0); // 0 seconds delay, showing the loader and redirecting back to home page
 }
 
