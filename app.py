@@ -142,7 +142,7 @@ def login():
                     logged_in=True
                     logged_in_as="student"
                     flash("Successfully Signed In!", "success")
-                    flash(document.get("name"), "username")
+                    flash("student", "username")
                     return render_template("./login.html")
                 
                 # to check if at least the email exists in the DB
@@ -193,6 +193,21 @@ def student_home_page():
         return render_template("./student_page.html")
     else:
         return "Kindly Login First"
+    
+    
+@app.route("/role_home", methods=["GET", "POST"])
+def role_home():
+    if(logged_in==True):
+        if(logged_in_as=="admin"):
+            return redirect(url_for("admin_home_page"))
+        elif(logged_in_as=="hod"):
+            return redirect(url_for("hod_home_page"))
+        elif(logged_in_as=="teacher"):
+            return redirect(url_for("teacher_home_page"))
+        elif(logged_in_as=="student"):
+            return redirect(url_for("student_home_page"))
+        
+    return redirect(url_for("home"))
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -655,6 +670,11 @@ def dashboard():
     
     else:
         return "Kindly Login First"    
+
+
+@app.route("/contact_us", methods=["GET", "POST"])
+def contact_us_page():
+    return render_template("./contact.html")
 
 
 app.run(debug=True, port=5005)
