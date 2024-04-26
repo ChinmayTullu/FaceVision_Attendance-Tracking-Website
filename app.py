@@ -657,8 +657,4 @@ def dashboard():
         return "Kindly Login First"    
 
 
-def check_login():
-    pass    
-
-
 app.run(debug=True, port=5005)
