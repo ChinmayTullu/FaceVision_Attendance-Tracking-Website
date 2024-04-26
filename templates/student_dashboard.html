@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Chart</title>
+        <title>Student Dashboard</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -42,67 +42,7 @@
         </style>
     </head>
     <body>
-        <div class="my-2" style="padding: 0;">
-            <form action="/student_dashboard" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="form-type" value="charts">
-                <div class="my-0" style="padding-left: 1rem; justify-content: left; text-align: start; align-items: start;">
-                    <div>
-                        <label for="basic-url" class="form-label text-dark" style="padding-left: 1rem; justify-content: left; text-align: start; align-items: start;">
-                            Enter roll number
-                        </label>
-                        <div class="input-group w-25" style="padding-left: 1rem">
-                            <span class="input-group-text text-dark" id="basic-addon3">1-180</span>
-                            <input
-                                name="face_id"
-                                type="text"
-                                class="form-control"
-                                id="basic-url"
-                                aria-describedby="basic-addon3 basic-addon4"
-                            />
-                        </div>
-                    </div>
-                    <div class="mt-1" style="padding-left: 1rem">
-                        <button
-                            style="font-weight: 450"
-                            type="submit"
-                            class="btn btn-outline-danger"
-                            action=""
-                        >
-                            Generate Graphs
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <form action="/student_dashboard" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="form-type" value="send-mail">
-                <div class="mt-4" style="padding-left: 1rem; justify-content: left; text-align: start; align-items: start;">
-                    <div>
-                        <div class="input-group w-25" style="padding-left: 1rem">
-                            <span class="input-group-text text-dark" id="basic-addon3">Subject</span>
-                            <input
-                                name="subject"
-                                type="text"
-                                class="form-control"
-                                id="basic-url"
-                                aria-describedby="basic-addon3 basic-addon4"
-                            />
-                        </div>
-                    </div>
-                    <div class="mt-1" style="padding-left: 1rem">
-                        <button
-                            style="font-weight: 450"
-                            type="submit"
-                            class="btn btn-outline-primary"
-                            action=""
-                        >
-                            Send Defaulter Mail
-                        </button>
-                    </div>
-                </div>
-            </form>
-
-        </div>
-
+        <br><br><br><br>
         <div>
             <label for="chartType">Select Chart Type:</label>
             <select id="chartType" onchange="toggleChart()">

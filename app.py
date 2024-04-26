@@ -10,13 +10,24 @@ import bcrypt
 import json
 import tempfile
 import os as osm
+from flask_mail import Mail, Message
 import csv
 
 app = Flask(__name__)
+mail = Mail(app)
+
 app.secret_key = "secret_key"
 app.config["MONGO_URI"] = "mongodb+srv://chinmaytullu10:cmt175@cluster0.v20rn6t.mongodb.net/college"
 db = PyMongo(app).db
 fs = gridfs.GridFS(db)
+
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'facevisionct@gmail.com'
+app.config['MAIL_PASSWORD'] = 'rs!yt@ct#'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app) 
 
 logged_in=False
 logged_in_as=None
@@ -371,127 +382,134 @@ def register():
     
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
-    success=""
-    if request.method == "POST":
-        camera=cv2.VideoCapture(0) #to capture video through camera using openCV
-        #set() gives width and height in terms of pixels
-        camera.set(3, 640) #for width(3)
-        camera.set(4, 480) #for height(4)
+    if(logged_in==True and (logged_in_as=="admin" or logged_in_as=="hod" or logged_in_as=="teacher")):
+        success=""
+        if request.method == "POST":
+            camera=cv2.VideoCapture(0) #to capture video through camera using openCV
+            #set() gives width and height in terms of pixels
+            camera.set(3, 640) #for width(3)
+            camera.set(4, 480) #for height(4)
 
-        #has complex classifiers like AdaBoost which allows negative input(non-face) to be quickly discarded while spending more computation on promising or positive face-like regions.
-        face=cv2.CascadeClassifier("./haarcascade_frontalface_default.xml") #to detect the face
-        # face= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        face_id=request.form.get("face_id") #in order to get recognised later
-        print("Capturing face....")
+            #has complex classifiers like AdaBoost which allows negative input(non-face) to be quickly discarded while spending more computation on promising or positive face-like regions.
+            face=cv2.CascadeClassifier("./haarcascade_frontalface_default.xml") #to detect the face
+            # face= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+            face_id=request.form.get("face_id") #in order to get recognised later
+            print("Capturing face....")
 
-        i=0 #keeps a count of the number of images
+            i=0 #keeps a count of the number of images
 
-        while(True): #to get images for dataset
-            ret, img=camera.read() #to capture images using the camera
-    
-            #grayscale compresses an image to its barest minimum pixel, thereby making it easy for visualization
-            gray=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #converting image to gray color
-    
-            #if a rectangle is found, it returns Rect(x, y, w, h)
-            faces=face.detectMultiScale(gray, 1.3, 5) #multiscale detection of gray image with dimensions    
-
-            for(a, b, c, d) in faces: #to store images in dataset
-                #to draw the rectangle in the original image that we found out in the frame with parameters as the image, start of (x, y) then the width and height as (x+w, y+h) and finally the color in RGB
-                cv2.rectangle(img, (a, b), (a+c, b+d), (255, 0, 0))
-                i+=1
+            while(True): #to get images for dataset
+                ret, img=camera.read() #to capture images using the camera
         
-                #writing into the dataset, first the name of the images in dataset and then the image
-                cv2.imwrite("./dataset/User."+ str(face_id) +"."+ str(i) +".jpg", gray[b:b+d, a:a+c])
+                #grayscale compresses an image to its barest minimum pixel, thereby making it easy for visualization
+                gray=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #converting image to gray color
         
-                #to display the image that is scanned 
-                cv2.imshow("image", img)
-                
-                img_array = gray[b:b+d, a:a+c]  # Extract the face region
-                # Convert the numpy array to binary
-                
-                _, img_encoded = cv2.imencode('.jpg', img_array)
-                # Insert binary data into MongoDB
-                
-                fs.put(img_encoded.tobytes(), filename=f"User.{face_id}.{i}.jpg")
+                #if a rectangle is found, it returns Rect(x, y, w, h)
+                faces=face.detectMultiScale(gray, 1.3, 5) #multiscale detection of gray image with dimensions    
 
-            #takes in miliseconds after which it will close, if argument is 0, then it will run until a key is pressed
-            x=cv2.waitKey(1) & 0xff
-            #if x==20:
-                #break
-            if i>=150:
-                break
-
-        print("\nExiting Program")
-        camera.release()
-        cv2.destroyAllWindows()
-        
-        # Training it simultaneously
-        
-        #path for face image database
-        # path='./dataset'
-
-        recognizer = cv2.face.LBPHFaceRecognizer.create()
-
-        detector=cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-
-        #function to get the images and label data
-        def getImagesAndLabels():
-            # imagePaths=[os.path.join(path, f) for f in os.listdir(path)] #to specify image path using os 
-            faceSamples=[]
-            ids=[]
+                for(a, b, c, d) in faces: #to store images in dataset
+                    #to draw the rectangle in the original image that we found out in the frame with parameters as the image, start of (x, y) then the width and height as (x+w, y+h) and finally the color in RGB
+                    cv2.rectangle(img, (a, b), (a+c, b+d), (255, 0, 0))
+                    i+=1
             
-        # Get the images from MongoDB
-            for grid_out in fs.find({}):
-                img_bytes = grid_out.read()
-                nparr = np.frombuffer(img_bytes, np.uint8)
-                img_np = cv2.imdecode(nparr, cv2.IMREAD_GRAYSCALE)
+                    #writing into the dataset, first the name of the images in dataset and then the image
+                    cv2.imwrite("./dataset/User."+ str(face_id) +"."+ str(i) +".jpg", gray[b:b+d, a:a+c])
+            
+                    #to display the image that is scanned 
+                    cv2.imshow("image", img)
+                    
+                    img_array = gray[b:b+d, a:a+c]  # Extract the face region
+                    # Convert the numpy array to binary
+                    
+                    _, img_encoded = cv2.imencode('.jpg', img_array)
+                    # Insert binary data into MongoDB
+                    
+                    fs.put(img_encoded.tobytes(), filename=f"User.{face_id}.{i}.jpg")
 
-                # Extract the ID from the filename
-                id = int(grid_out.filename.split(".")[1])
+                #takes in miliseconds after which it will close, if argument is 0, then it will run until a key is pressed
+                x=cv2.waitKey(1) & 0xff
+                #if x==20:
+                    #break
+                if i>=150:
+                    break
 
-                faces = detector.detectMultiScale(img_np)
+            print("\nExiting Program")
+            camera.release()
+            cv2.destroyAllWindows()
+            
+            # Training it simultaneously
+            
+            #path for face image database
+            # path='./dataset'
 
-                for (x, y, w, h) in faces:
-                    faceSamples.append(img_np[y:y+h, x:x+w])
-                    ids.append(id)
+            recognizer = cv2.face.LBPHFaceRecognizer.create()
 
-            return faceSamples, ids
+            detector=cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
-            # for imagePath in imagePaths: #for every imagePath in imagePaths
-            #     PIL_img=Image.open(imagePath).convert('L') #convert it to grayscale L-Luminiscence
-            #     img_numpy=np.array(PIL_img, 'uint8') #converts grayscale PIL image into numpy array
-            #     #uint8 means unsigned integer of 8-bits and stores it in numpy array 
+            #function to get the images and label data
+            def getImagesAndLabels():
+                # imagePaths=[os.path.join(path, f) for f in os.listdir(path)] #to specify image path using os 
+                faceSamples=[]
+                ids=[]
+                
+            # Get the images from MongoDB
+                for grid_out in fs.find({}):
+                    img_bytes = grid_out.read()
+                    nparr = np.frombuffer(img_bytes, np.uint8)
+                    img_np = cv2.imdecode(nparr, cv2.IMREAD_GRAYSCALE)
 
-            #     #split path and file name, and further split and take the 2nd element of it
-            #     id=int(os.path.split(imagePath)[-1].split(".")[1]) #naming conventions
-            #     faces=detector.detectMultiScale(img_numpy) 
+                    # Extract the ID from the filename
+                    id = int(grid_out.filename.split(".")[1])
 
-            #     for(x,y,w,h) in faces:
-            #         faceSamples.append(img_numpy[y:y+h,x:x+w]) #selects only ROI
-            #         ids.append(id)
+                    faces = detector.detectMultiScale(img_np)
 
-            # return faceSamples, ids
+                    for (x, y, w, h) in faces:
+                        faceSamples.append(img_np[y:y+h, x:x+w])
+                        ids.append(id)
 
-        print ("\n\tTraining faces. It will take a few seconds. Please wait ...")
-        faces, ids = getImagesAndLabels() #respective images and user ID
-        recognizer.train(faces, np.array(ids)) #trains model with corresponding faces and numpy array of ids
+                return faceSamples, ids
 
-        #save the model into trainer/trainer.yml
-        recognizer.write('./trainer.yml') 
+                # for imagePath in imagePaths: #for every imagePath in imagePaths
+                #     PIL_img=Image.open(imagePath).convert('L') #convert it to grayscale L-Luminiscence
+                #     img_numpy=np.array(PIL_img, 'uint8') #converts grayscale PIL image into numpy array
+                #     #uint8 means unsigned integer of 8-bits and stores it in numpy array 
 
-        #print the numer of faces trained and end program
-        print("\n\t{0} faces trained.".format(len(np.unique(ids))))
-        
-        attendance_data = {
-            "date": datetime.now().strftime("%d-%m-%Y"),
-            "time": datetime.now().strftime("%H:%M:%S"),
-            "face_id": int(face_id),
-            "attend": {"dbms": 0, "aoa": 0, "math": 0, "os": 0, "mp":0} 
-        }
-        db.students_attendance.insert_one(attendance_data)
-        success="Student Registered!"
+                #     #split path and file name, and further split and take the 2nd element of it
+                #     id=int(os.path.split(imagePath)[-1].split(".")[1]) #naming conventions
+                #     faces=detector.detectMultiScale(img_numpy) 
 
-    return render_template("./collect.html", success=success) 
+                #     for(x,y,w,h) in faces:
+                #         faceSamples.append(img_numpy[y:y+h,x:x+w]) #selects only ROI
+                #         ids.append(id)
+
+                # return faceSamples, ids
+
+            print ("\n\tTraining faces. It will take a few seconds. Please wait ...")
+            faces, ids = getImagesAndLabels() #respective images and user ID
+            recognizer.train(faces, np.array(ids)) #trains model with corresponding faces and numpy array of ids
+
+            #save the model into trainer/trainer.yml
+            recognizer.write('./trainer.yml') 
+
+            #print the numer of faces trained and end program
+            print("\n\t{0} faces trained.".format(len(np.unique(ids))))
+            
+            attendance_data = {
+                "date": datetime.now().strftime("%d-%m-%Y"),
+                "time": datetime.now().strftime("%H:%M:%S"),
+                "face_id": int(face_id),
+                "attend": {"dbms": 0, "aoa": 0, "math": 0, "os": 0, "mp":0} 
+            }
+            db.students_attendance.insert_one(attendance_data)
+            success="Student Registered!"
+
+        return render_template("./collect.html", success=success)
+    
+    elif(logged_in_as=="student"):
+        return "You don't have the access to this :)"
+    
+    else:
+        return "Kindly Login First" 
 
 
 selected_subject=""
@@ -649,7 +667,8 @@ def download_csv():
 @app.route("/student_dashboard", methods=["GET", "POST"])
 def dashboard():
     if(logged_in==True and (logged_in_as=="admin" or logged_in_as=="teacher" or logged_in_as=="hod")):
-        if request.method=="POST":
+        if('form-type' in request.form and request.form['form-type']=="charts"):
+            print(request.form)
             roll_no=int(request.form.get("face_id"))
             document=db.students_attendance.find_one({"face_id": roll_no})
             if document:
@@ -661,7 +680,19 @@ def dashboard():
                 mp=document.get("attend").get("mp")
                 student={"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp}
                 print(json.dumps(student))
-                return render_template("./chart.html", student=json.dumps(student)) 
+                return render_template("./chart.html", student=json.dumps(student))
+            
+        elif('form-type' in request.form and request.form['form-type']=="send-mail"):
+            subject=request.form['subject']
+            msg = Message( 
+                f'{subject} Defaulter', 
+                sender ='facevisionct@gmail.com', 
+                recipients = ['chinmay.tulluu.201381@gmail.com'] 
+                ) 
+            msg.body = f'Your attendance has been less than expected in {subject}, kindly attend classes else your termwork will be affected'
+            mail.send(msg) 
+            return 'Sent'
+            # return render_template("./chart.html")
             
         return render_template("./chart.html")  
     
@@ -669,7 +700,13 @@ def dashboard():
         return "You don't have the access to this :)"
     
     else:
-        return "Kindly Login First"    
+        return "Kindly Login First"
+    
+    
+@app.route("/personalized_dashboard", methods=["GET", "POST"])
+def personalized_dashboard():
+    if(request.method=="post"):
+        return render_template("./student_dashboard.html") 
 
 
 @app.route("/contact_us", methods=["GET", "POST"])
