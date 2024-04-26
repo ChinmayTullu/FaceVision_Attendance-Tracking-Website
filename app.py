@@ -36,10 +36,10 @@ def login_page():
     if(logged_in==True):
         if(logged_in_as=="admin"):
             return redirect(url_for("admin_home_page"))
+        elif(logged_in_as=="hod"):
+            return redirect(url_for("hod_home_page")) 
         elif(logged_in_as=="teacher"):
             return redirect(url_for("teacher_home_page"))
-        elif(logged_in_as=="hod"):
-            return redirect(url_for("hod_home_page"))     
         else:
             return redirect(url_for("student_home_page"))
             
@@ -66,7 +66,7 @@ def login():
                 logged_in=True
                 logged_in_as="admin"
                 flash("Successfully Signed In!", "success")
-                flash(doc.get("name"), "username")
+                flash("admin", "username")
                 return render_template("./login.html")
             
         isEmpty=True #to check if DB is empty
@@ -81,8 +81,10 @@ def login():
                 
                 # if user with provided credentials is present, display success message and return the same page
                 if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    logged_in=True
+                    logged_in_as="hod"
                     flash("Successfully Signed In!", "success")
-                    flash(document.get("name"), "username")
+                    flash(role, "username")
                     return render_template("./login.html")
                 
                 # to check if at least the email exists in the DB
@@ -108,8 +110,10 @@ def login():
                 
                 # if user with provided credentials is present, display success message and return the same page
                 if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    logged_in=True
+                    logged_in_as="teacher"
                     flash("Successfully Signed In!", "success")
-                    flash(document.get("name"), "username")
+                    flash(role, "username")
                     return render_template("./login.html")
                 
                 # to check if at least the email exists in the DB
@@ -135,6 +139,8 @@ def login():
                 
                 # if user with provided credentials is present, display success message and return the same page
                 if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
+                    logged_in=True
+                    logged_in_as="student"
                     flash("Successfully Signed In!", "success")
                     flash(document.get("name"), "username")
                     return render_template("./login.html")
@@ -470,7 +476,7 @@ def collect():
         db.students_attendance.insert_one(attendance_data)
         success="Student Registered!"
 
-    return render_template("./collect.html", success=success) #return "SUCCESS"
+    return render_template("./collect.html", success=success) 
 
 
 selected_subject=""
@@ -487,7 +493,7 @@ def recognize():
         #initiate id counter
         id=0
 
-        names=[j for j in range(181)] 
+        names=[j for j in range(501)] 
         #names["Chinmay"]
 
         #initialize and start realtime video capture

@@ -61,18 +61,17 @@
                     <button type="submit" class="btn btn-outline-success">Login</button>
                 </div>
             </form>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div id="message" class="container text-danger text-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
         </div>
     </main>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div id="message" class="container text-danger text-{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
 
     <div id="loading" class="text-center d-none">
         <div class="spinner-border text-info visually-hidden" role="status">

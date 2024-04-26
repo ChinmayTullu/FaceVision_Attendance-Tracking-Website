@@ -26,6 +26,10 @@ function redirectAfterDelay() {
             window.location.href = "/admin_home";
         else if(username==="hod")
             window.location.href = "/hod_home";
+        else if(username==="teacher")
+            window.location.href = "/teacher_home";
+        else if(username==="student")
+            window.location.href = "/student_home"
     }, 0); // 0 seconds delay, showing the loader and redirecting back to home page
 }
 
