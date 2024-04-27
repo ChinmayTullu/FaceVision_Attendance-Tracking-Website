@@ -24,14 +24,14 @@ fs = gridfs.GridFS(db)
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'facevisionct@gmail.com'
-app.config['MAIL_PASSWORD'] = 'rs!yt@ct#'
+app.config['MAIL_PASSWORD'] = 'dehl xjoa qagi rthk'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app) 
 
 logged_in=False
 logged_in_as=None
-
+roll_number=0
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -142,6 +142,7 @@ def login():
                 flash("Incorrect Password, Please Check Your Password Carefully!", "fail")
             
         elif(role=="student"):        
+            global roll_number
             documents=db.students_information.find({}) #gets all the documents from the collection
             
             for document in documents:
@@ -152,6 +153,7 @@ def login():
                 if email==email1 and bcrypt.checkpw(password.encode(), document.get("hashedPassword")):
                     logged_in=True
                     logged_in_as="student"
+                    roll_number=int(document.get("roll number"))
                     flash("Successfully Signed In!", "success")
                     flash("student", "username")
                     return render_template("./login.html")
@@ -689,15 +691,15 @@ def dashboard():
                 sender ='facevisionct@gmail.com', 
                 recipients = ['chinmay.tulluu.201381@gmail.com'] 
                 ) 
-            msg.body = f'Your attendance has been less than expected in {subject}, kindly attend classes else your termwork will be affected'
+            msg.body = f'Your attendance has been less than expected in {subject}, kindly attend classes else your termwork will be affected.\n\n\n\n-{subject} Department\nThadomal Shahani Engineering College\n'
             mail.send(msg) 
             return 'Sent'
             # return render_template("./chart.html")
             
-        return render_template("./chart.html")  
+        return render_template("./chart.html")
     
     elif(logged_in_as=="student"):
-        return "You don't have the access to this :)"
+        return render_template("./accessdenied.html")
     
     else:
         return "Kindly Login First"
@@ -705,8 +707,22 @@ def dashboard():
     
 @app.route("/personalized_dashboard", methods=["GET", "POST"])
 def personalized_dashboard():
-    if(request.method=="post"):
-        return render_template("./student_dashboard.html") 
+    if(request.method=="POST"):
+        global roll_number
+        print(roll_number)
+        roll_no=roll_number
+        document=db.students_attendance.find_one({"face_id": roll_no})
+        if document:
+            id=document.get("face_id")
+            dbms=document.get("attend").get("dbms")
+            aoa=document.get("attend").get("aoa")
+            math=document.get("attend").get("math")
+            os=document.get("attend").get("os")
+            mp=document.get("attend").get("mp")
+            student={"roll_number": id, "dbms": dbms, "aoa": aoa, "math": math, "os": os, "mp": mp}
+            print(json.dumps(student))
+            return render_template("./student_dashboard.html", student=json.dumps(student))
+        return render_template("./student_dashboard.html")
 
 
 @app.route("/contact_us", methods=["GET", "POST"])
