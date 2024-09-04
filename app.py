@@ -270,7 +270,7 @@ def register():
                 if isValid==False: 
                     return "Fail" #returns the same page to re-enter the details 
                     
-            # if DB is empty or info provided is valid, insert it in the DB
+            #if DB is empty or info provided is valid, insert it in the DB
             if(isEmpty==True or isValid==True):
                 print("Entering info of", full_name)
                 hod_info = {
